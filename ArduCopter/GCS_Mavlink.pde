@@ -1924,7 +1924,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         y = 1.0/exp(y);
         y *= 95446.0;
 
-        barometer.setHIL(Temp, y);
+  barometer.setHIL(Temp, y);
 
  #if HIL_MODE == HIL_MODE_ATTITUDE
         // set AHRS hil sensor

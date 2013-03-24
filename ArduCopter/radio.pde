@@ -126,6 +126,9 @@ void output_min()
 #define FAILSAFE_RADIO_TIMEOUT_MS 2000       // 2 seconds
 static void read_radio()
 {
+    if (g.rc_off > 0)
+        return;
+    
     static uint32_t last_update = 0;
     if (hal.rcin->valid() > 0) {
         last_update = millis();

@@ -480,6 +480,13 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Values: 125,400,490
     // @User: Advanced
     GSCALAR(rc_speed, "RC_SPEED",              RC_FAST_SPEED),
+       
+    // @Param: RC_OFF
+    // @DisplayName: Turn RC input off
+    // @Description: Remove requirement for rc input
+    // @Values: 0:Disabled, 1:Enabled
+    // @User: Advanced
+    GSCALAR(rc_off, "RC_OFF",              0),        
 
     // @Param: ACRO_P
     // @DisplayName: Acro P gain

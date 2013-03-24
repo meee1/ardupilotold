@@ -275,6 +275,10 @@ AP_GPS_HIL              g_gps_driver;
 AP_InertialSensor_Stub  ins;
 AP_AHRS_DCM             ahrs(&ins, g_gps);
 
+ #if CONFIG_HAL_BOARD == HAL_BOARD_AVR_SITL
+ // When building for SITL we use the HIL barometer and compass drivers
+SITL sitl;
+#endif
 
 static int32_t gps_base_alt;
 
@@ -285,6 +289,11 @@ AP_AHRS_HIL             ahrs(&ins, g_gps);
 AP_GPS_HIL              g_gps_driver;
 AP_Compass_HIL          compass;                  // never used
 AP_Baro_BMP085_HIL      barometer;
+
+ #if CONFIG_HAL_BOARD == HAL_BOARD_AVR_SITL
+ // When building for SITL we use the HIL barometer and compass drivers
+SITL sitl;
+#endif
 
 static int32_t gps_base_alt;
 #else
@@ -1038,6 +1047,9 @@ static void fast_loop()
     }
 #endif  // OPTFLOW == ENABLED
 
+    if (g.rc_off > 0)
+        g.rc_3.set_pwm(1150);//
+    
     // Read radio and 3-position switch on radio
     // -----------------------------------------
     read_radio();

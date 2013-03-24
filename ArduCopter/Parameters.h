@@ -191,6 +191,7 @@ public:
         k_param_failsafe_battery_enabled,
         k_param_throttle_mid,
         k_param_failsafe_gps_enabled,  // 195
+        k_param_rc_off,
 
         //
         // 200: flight modes
@@ -356,6 +357,7 @@ public:
     RC_Channel_aux          rc_11;
 #endif
     AP_Int16                rc_speed; // speed of fast RC Channels in Hz
+    AP_Int8                 rc_off;
 
     // Acro parameters
     AP_Float                acro_p;
