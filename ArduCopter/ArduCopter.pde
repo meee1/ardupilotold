@@ -1008,6 +1008,8 @@ void loop()
 // Main loop - 100hz
 static void fast_loop()
 {
+//    printf("cm %d ym %d rpm %d tm %d\n",control_mode,yaw_mode,roll_pitch_mode,throttle_mode);
+    
     // IMU DCM Algorithm
     // --------------------
     read_AHRS();
@@ -1047,8 +1049,18 @@ static void fast_loop()
     }
 #endif  // OPTFLOW == ENABLED
 
-    if (g.rc_off > 0)
-        g.rc_3.set_pwm(1150);//
+    if (g.rc_off > 0) {
+        if (control_mode == LOITER || control_mode == RTL) {
+            g.rc_3.set_pwm(g.rc_3.radio_min + ((g.rc_3.radio_max - g.rc_3.radio_min) / 2)); // mid throttle
+        } else {
+            g.rc_3.set_pwm(1150);
+        }
+    }
+    
+    //if (!motors.armed()) {
+        //inertial_nav.set_altitude(0);
+        //inertial_nav.set_velocity_z(0);
+    //}
     
     // Read radio and 3-position switch on radio
     // -----------------------------------------
@@ -2049,20 +2061,13 @@ static void update_trig(void){
 // read baro and sonar altitude at 10hz
 static void update_altitude()
 {
-#if HIL_MODE == HIL_MODE_ATTITUDE
-    // we are in the SIM, fake out the baro and Sonar
-    baro_alt                = g_gps->altitude - gps_base_alt;
 
-    if(g.sonar_enabled) {
-        sonar_alt           = baro_alt;
-    }
-#else
     // read in baro altitude
     baro_alt            = read_barometer();
 
     // read in sonar altitude
     sonar_alt           = read_sonar();
-#endif  // HIL_MODE == HIL_MODE_ATTITUDE
+
 
     // write altitude info to dataflash logs
     if ((g.log_bitmask & MASK_LOG_CTUN) && motors.armed()) {

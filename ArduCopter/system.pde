@@ -473,9 +473,10 @@ static void set_mode(uint8_t mode)
         set_yaw_mode(GUIDED_YAW);
         set_roll_pitch_mode(GUIDED_RP);
         set_throttle_mode(GUIDED_THR);
-        set_nav_mode(GUIDED_NAV);
         wp_verify_byte = 0;
         set_next_WP(&guided_WP);
+        set_nav_mode(GUIDED_NAV);
+        wpinav_set_destination(guided_WP);
         break;
 
     case LAND:
