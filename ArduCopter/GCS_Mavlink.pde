@@ -1766,7 +1766,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         mavlink_msg_hil_state_decode(msg, &packet);
 
         float vel = sqrt((packet.vx * (float)packet.vx) + (packet.vy * (float)packet.vy));
-        float cog = wrap_360(ToDeg(atan2(packet.vx, packet.vy)) * 100);
+        float cog = wrap_360(ToDeg(atan2f(packet.vx, packet.vy)) * 100);
 
         // set gps hil sensor
         g_gps->setHIL(packet.time_usec/1000,
@@ -1775,6 +1775,7 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
 
         if (gps_base_alt == 0) {
             gps_base_alt = g_gps->altitude;
+            current_loc.alt = 0;
         }
         current_loc.lng = g_gps->longitude;
         current_loc.lat = g_gps->latitude;
@@ -1789,20 +1790,50 @@ void GCS_MAVLINK::handleMessage(mavlink_message_t* msg)
         gyros.x = packet.rollspeed;
         gyros.y = packet.pitchspeed;
         gyros.z = packet.yawspeed;
+
         // m/s/s
         Vector3f accels;
-        accels.x = (float)packet.xacc / 1000.0;
-        accels.y = (float)packet.yacc / 1000.0;
-        accels.z = (float)packet.zacc / 1000.0;
+        accels.x = packet.xacc * (9.808/1000.0);
+        accels.y = packet.yacc * (9.808/1000.0);
+        accels.z = packet.zacc * (9.808/1000.0);
 
-        ins.set_gyro_offsets(gyros);
+        ins.set_gyro(gyros);
 
-        ins.set_accel_offsets(accels);
+        ins.set_accel(accels);
 
+        // approximate a barometer
+        float Temp = 312;
 
+        float y = (packet.alt - 584000.0) / 29271.267;
+        y /= (Temp / 10.0) + 273.15;
+        y = 1.0/exp(y);
+        y *= 95446.0;
+
+        barometer.setHIL(Temp, y);
+  
+        Vector3f Bearth, m;
+        Matrix3f R;
+
+        // Bearth is the magnetic field in Canberra. We need to adjust
+        // it for inclination and declination
+        Bearth(400, 0, 0);
+        R.from_euler(0, 0, 0);
+        Bearth = R * Bearth;
+
+        // create a rotation matrix for the given attitude
+        R.from_euler(packet.roll, packet.pitch, packet.yaw);
+
+        // convert the earth frame magnetic vector to body frame, and
+        // apply the offsets
+        m = R.transposed() * Bearth - Vector3f(0, 0, 0);
+       
+        compass.setHIL(m.x,m.y,m.z);
+
+ #if HIL_MODE == HIL_MODE_ATTITUDE
         // set AHRS hil sensor
         ahrs.setHil(packet.roll,packet.pitch,packet.yaw,packet.rollspeed,
                     packet.pitchspeed,packet.yawspeed);
+ #endif
 
 
 

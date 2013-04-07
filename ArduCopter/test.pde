@@ -915,13 +915,13 @@ test_sonar(uint8_t argc, const Menu::arg *argv)
     }
 
     // make sure sonar is initialised
-    init_sonar();
+  //  init_sonar();
 
     print_hit_enter();
     while(1) {
         delay(100);
 
-        cliSerial->printf_P(PSTR("Sonar: %d cm\n"), sonar.read());
+    //    cliSerial->printf_P(PSTR("Sonar: %d cm\n"), sonar.read());
         //cliSerial->printf_P(PSTR("Sonar, %d, %d\n"), sonar.read(), sonar.raw_value);
 
         if(cliSerial->available() > 0) {

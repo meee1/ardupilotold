@@ -184,6 +184,7 @@ public:
         k_param_rc_speed = 192,
         k_param_failsafe_battery_enabled,
         k_param_throttle_mid, // 194
+        k_param_rc_off,
 
         //
         // 200: flight modes
@@ -301,6 +302,7 @@ public:
     AP_Int16        failsafe_throttle_value;
     AP_Int16        throttle_cruise;
     AP_Int16        throttle_mid;
+    AP_Int8                 rc_off;
 
     // Flight modes
     //

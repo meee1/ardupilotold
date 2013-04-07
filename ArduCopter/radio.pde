@@ -128,6 +128,9 @@ void output_min()
 #define RADIO_FS_TIMEOUT_MS 2000       // 2 seconds
 static void read_radio()
 {
+    if (g.rc_off > 0)
+        return;
+    
     if (APM_RC.GetState() == 1) {
         ap_system.new_radio_frame = true;
         g.rc_1.set_pwm(APM_RC.InputCh(CH_1));

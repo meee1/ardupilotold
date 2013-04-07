@@ -11,7 +11,7 @@
 //#define APM2_BETA_HARDWARE
 
 //#define MAG_ORIENTATION		AP_COMPASS_COMPONENTS_DOWN_PINS_FORWARD
-//#define HIL_MODE				HIL_MODE_ATTITUDE
+#define HIL_MODE				HIL_MODE_SENSORS
 //#define DMP_ENABLED ENABLED
 //#define SECONDARY_DMP_ENABLED ENABLED       // allows running DMP in parallel with DCM for testing purposes
 
@@ -49,6 +49,8 @@
 //#define INERTIAL_NAV_XY ENABLED
 #define INERTIAL_NAV_Z ENABLED
 
+#define COPTER_LEDS DISABLED
+ 
 //#define MOTORS_JD880
 //#define MOTORS_JD850
 

@@ -183,6 +183,14 @@ const AP_Param::Info var_info[] PROGMEM = {
     // @Values: 0:Disabled, 1:Enabled
     // @User: Standard
     GSCALAR(throttle_accel_enabled,  "THR_ACC_ENABLE",   1),
+        
+    // @Param: RC_OFF
+    // @DisplayName: Turn RC input off
+    // @Description: Remove requirement for rc input
+    // @Values: 0:Disabled, 1:Enabled
+    // @User: Advanced
+    GSCALAR(rc_off, "RC_OFF",              0),        
+ 
 
     // @Param: YAW_OVR_BEHAVE
     // @DisplayName: Yaw override behaviour

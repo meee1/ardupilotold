@@ -303,6 +303,10 @@ AP_GPS_HIL              g_gps_driver(NULL);
 AP_InertialSensor_Stub  ins;
 AP_AHRS_DCM             ahrs(&ins, g_gps);
 
+ #ifdef DESKTOP_BUILD
+  #include <SITL.h>
+SITL sitl;
+ #endif     // DESKTOP_BUILD
 
 static int32_t gps_base_alt;
 
@@ -1061,6 +1065,14 @@ static void fast_loop()
         update_optical_flow();
     }
 #endif  // OPTFLOW == ENABLED
+    
+    if (g.rc_off > 0) {
+        if (control_mode == LOITER || control_mode == RTL) {
+            g.rc_3.set_pwm(g.rc_3.radio_min + ((g.rc_3.radio_max - g.rc_3.radio_min) / 2)); // mid throttle
+        } else {
+            g.rc_3.set_pwm(1150);
+        }
+    }
 
     // Read radio and 3-position switch on radio
     // -----------------------------------------
@@ -2109,6 +2121,8 @@ static void update_altitude_est()
     // with inertial nav we can update the altitude and climb rate at 50hz
     current_loc.alt = inertial_nav.get_altitude();
     climb_rate = inertial_nav.get_velocity_z();
+    
+ //   printf("alt %f cr %f baro %f\n",current_loc.alt,climb_rate,barometer.get_altitude());
 
     // update baro and sonar alt and climb rate just for logging purposes
     // To-Do: remove alt_sensor_flag and move update_altitude to be called from 10hz loop
